@@ -2,7 +2,7 @@ var canvas = document.getElementById('canvas');
 var c = canvas.getContext("2d");
 c.fillStyle = "#000000";
 c.fillRect(0, 0, canvas.width, canvas.height);
-canvas.addEventListener('dblclick', clear, false);
+canvas.addEventListener('click', clear, false);
 /** total time for a full cell color transition */
 var interval = 100;
 /** number of columns/rows */
@@ -23,9 +23,6 @@ var pixelStep = [0, 0, 0];
 /** coordinates of current cell */
 var x = getRandomInt(columnSize);
 var y = getRandomInt(columnSize);
-
-/** loop entry point*/
-var timer = setInterval(draw, interval / iterations);
 
 /** pick a new cell and pick a new color */
 function colorize() {
@@ -113,3 +110,10 @@ function nextColor255(oldColor, range) {
 function getRandomInt(max) {
     return Math.round(Math.random() * max);
 }
+
+function init(){
+	
+	setInterval(draw, interval / iterations);
+}
+
+init();

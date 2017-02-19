@@ -3,6 +3,7 @@ var c = canvas.getContext("2d");
 
 canvas.addEventListener('click', startWorm, false);
 canvas.addEventListener('dblclick', clear, false);
+window.addEventListener('resize', clear, false);
 
 /** total time for a full cell color transition */
 var interval = 100;

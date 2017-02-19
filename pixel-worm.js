@@ -15,7 +15,7 @@ var cellSize = canvas.width / columnSize;
 var iterations = 10;
 /** 0-255; ~90 and below keeps the adjacent colors relative*/
 var colorRange = 80;
-var maxWorms = 10;
+var maxWorms = 3;
 
 var index = [];
 index[0] = iterations;
@@ -33,8 +33,8 @@ var y = [];
 y[0] = getRandomInt(columnSize);
 
 /** loop entry point*/
-var timer = [];
-timer[0] = setInterval(function() { draw(0); }, interval / iterations);
+var wormTimers = [];
+wormTimers[0] = setInterval(function() { draw(0); }, interval / iterations);
 
 /** pick a new cell and pick a new color */
 function colorize(id) {
@@ -96,13 +96,13 @@ function draw(id) {
 function startWorm(event){
   var id;
   for(var i = 1;i < maxWorms; i++){
-    if(typeof(timer[i]) === 'undefined' || timer[i] === null){
+    if(typeof(wormTimers[i]) === 'undefined' || wormTimers[i] === null){
       id = i;
     }
   }
   if(typeof(id) === 'undefined'){
     id = maxWorms-1;
-    clearInterval(timer[id]);
+    clearInterval(wormTimers[id]);
   }
   if (event.pageX || event.pageY) {
         mouseX = event.pageX;
@@ -118,7 +118,7 @@ function startWorm(event){
     index[id] = iterations - 1;
   pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
   pixelStep[id] = [0, 0, 0];
-    timer[id] = setInterval(function() { draw(id); }, interval / iterations);
+    wormTimers[id] = setInterval(function() { draw(id); }, interval / iterations);
 
 }
 /** set the current cell to the one @ mouse pointer and clear screen with random color */
@@ -138,8 +138,8 @@ function clear(event) {
     document.body.style.background = c.fillStyle;
     c.fillRect(0, 0, canvas.width, canvas.height);
   for(var i=1;i<maxWorms;i++){
-    clearInterval(timer[i]);
-    timer[i]=null;
+    clearInterval(wormTimers[i]);
+    wormTimers[i]=null;
   }
 }
 

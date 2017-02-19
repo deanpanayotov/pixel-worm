@@ -1,7 +1,6 @@
 var canvas = document.getElementById('canvas');
 var c = canvas.getContext("2d");
-c.fillStyle = "#000000";
-c.fillRect(0, 0, canvas.width, canvas.height);
+
 canvas.addEventListener('click', startWorm, false);
 canvas.addEventListener('dblclick', clear, false);
 

@@ -1,9 +1,9 @@
 var canvas = document.getElementById('canvas');
 var c = canvas.getContext("2d");
 
-canvas.addEventListener('click', startWorm, false);
-canvas.addEventListener('dblclick', clear, false);
-window.addEventListener('resize', clear, false);
+canvas.addEventListener('click', click, false);
+canvas.addEventListener('dblclick', dblclick, false);
+window.addEventListener('resize', resize, false);
 
 /** total time for a full cell color transition */
 var interval = 100;
@@ -84,7 +84,6 @@ function updateCell(id) {
 
 /** paint next iteration of color to the current cell */
 function draw(id) {
-	console.log("draw", id);
     if (index[id] == iterations) {
         colorize(id);
         index[id] = 0;
@@ -95,8 +94,7 @@ function draw(id) {
 }
 
 /** start another worm */
-function startWorm(event){
-	console.log("start");
+function startWorm(mousePosition){
 	var id;
 	for(var i = 1;i < maxWorms; i++){
 		if(typeof(wormTimers[i]) === 'undefined' || wormTimers[i] === null){
@@ -107,21 +105,9 @@ function startWorm(event){
 		id = maxWorms-1;
 		clearInterval(wormTimers[id]);
 	}
-	if(event){
-		var mouseX, mouseY;
-		console.log("mouse event");
-		if (event.pageX || event.pageY) {
-			mouseX = event.pageX;
-			mouseY = event.pageY;
-		} else {
-			mouseX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-			mouseY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-		}  
-		mouseX -= canvas.offsetLeft;
-		mouseY -= canvas.offsetTop;
-		
-		x[id] = Math.floor(mouseX / cellSize);
-		y[id] = Math.floor(mouseY / cellSize);
+	if(mousePosition){
+		x[id] = Math.floor(mousePosition.x / cellSize);
+		y[id] = Math.floor(mousePosition.y / cellSize);
 	}else{
 		x[id] = 0;
 		y[id] = 0;
@@ -130,17 +116,15 @@ function startWorm(event){
 	index[id] = iterations - 1;
 	pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
 	pixelStep[id] = [0, 0, 0];
-	console.log("worm", id);
     wormTimers[id] = setInterval(function() { draw(id); }, interval / iterations);
 
 }
 
 /** set the current cell to the one @ mouse pointer and clear screen with random color */
-function clear(event) {
-	console.log("clear");
+function clear(position) {
 	clearWormTimers();    
 	changeBackground();
-	startWorm();
+	startWorm(position);
 }
 
 function changeBackground(){
@@ -167,4 +151,31 @@ function nextColor255(oldColor, range) {
 /** returns a random integer in the range [0;max] */
 function getRandomInt(max) {
     return Math.round(Math.random() * max);
+}
+
+function click(event){
+	startWorm(getMousePosition(event));
+}
+
+function dblclick(event){
+	clear(getMousePosition(event));
+}
+
+function resize(){
+	clear({x: 0,y: 0});
+}
+
+function getMousePosition(event){
+	var mouseX, mouseY;
+	if (event.pageX || event.pageY) {
+		mouseX = event.pageX;
+		mouseY = event.pageY;
+	} else {
+		mouseX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+		mouseY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+	}  
+	mouseX -= canvas.offsetLeft;
+	mouseY -= canvas.offsetTop;
+	
+	return { x: mouseX, y: mouseY };
 }

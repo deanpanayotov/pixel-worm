@@ -33,12 +33,16 @@ function colorize(id) {
 
     updateCell(id);
     var oldPixel = [];
+	
+	//TODO why is data obtained this way? Unnecessary calculations.
     oldPixel[0] = pixel[id][0] + pixelStep[id][0] * (iterations - 1);
     oldPixel[1] = pixel[id][1] + pixelStep[id][1] * (iterations - 1);
     oldPixel[2] = pixel[id][2] + pixelStep[id][2] * (iterations - 1);
 
+	//TODO guarantee that the sampled pixel is within the new cell
     pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
-
+	
+	//TODO Use hsv/hsl color generation
     pixelStep[id][0] = (nextColor255(oldPixel[0], colorRange) - pixel[id][0]) / iterations;
     pixelStep[id][1] = (nextColor255(oldPixel[1], colorRange) - pixel[id][1]) / iterations;
     pixelStep[id][2] = (nextColor255(oldPixel[2], colorRange) - pixel[id][2]) / iterations;
@@ -48,6 +52,7 @@ function colorize(id) {
 
 /** randomly select an adjacent cell (with border checks) */
 function updateCell(id) {
+	//TODO use mod to wrap around the array
     if (Math.round(Math.random()) == 1) {
         if (x[id] === 0) {
             x[id] = 1;
@@ -92,6 +97,8 @@ function createWorm(mousePosition){
 		mousePosition = {x: rndInt(columnSize), y: rndInt(columnSize)};
 	}
 	
+	//TODO fix this: If max worm count is reached --> clear
+	//TODO this check should be moved in the click event
 	var id;
 	for(var i = 1;i < maxWorms; i++){
 		if(typeof(wormTimers[i]) === 'undefined' || wormTimers[i] === null){
@@ -119,6 +126,7 @@ function clear(position) {
 }
 
 function changeBackground(){
+	//TODO use hsv/hsl generation. Use only tones that are soft
 	c.fillStyle = "rgb(" + rndInt(255) + ", " + rndInt(255) + ", " + rndInt(255) + ")";
     document.body.style.background = c.fillStyle;
     c.fillRect(0, 0, canvas.width, canvas.height);

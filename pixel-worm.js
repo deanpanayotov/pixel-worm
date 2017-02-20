@@ -84,6 +84,7 @@ function updateCell(id) {
 
 /** paint next iteration of color to the current cell */
 function draw(id) {
+	console.log("draw", id);
     if (index[id] == iterations) {
         colorize(id);
         index[id] = 0;
@@ -92,55 +93,67 @@ function draw(id) {
     c.fillRect(x[id] * cellSize, y[id] * cellSize, cellSize, cellSize);
     index[id]++;
 }
+
 /** start another worm */
 function startWorm(event){
-  var id;
-  for(var i = 1;i < maxWorms; i++){
-    if(typeof(wormTimers[i]) === 'undefined' || wormTimers[i] === null){
-      id = i;
-    }
-  }
-  if(typeof(id) === 'undefined'){
-    id = maxWorms-1;
-    clearInterval(wormTimers[id]);
-  }
-  if (event.pageX || event.pageY) {
-        mouseX = event.pageX;
-        mouseY = event.pageY;
-    } else {
-        mouseX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-        mouseY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-    }
-    mouseX -= canvas.offsetLeft;
-    mouseY -= canvas.offsetTop;
-    x[id] = Math.floor(mouseX / cellSize);
-    y[id] = Math.floor(mouseY / cellSize);
-    index[id] = iterations - 1;
-  pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
-  pixelStep[id] = [0, 0, 0];
+	console.log("start");
+	var id;
+	for(var i = 1;i < maxWorms; i++){
+		if(typeof(wormTimers[i]) === 'undefined' || wormTimers[i] === null){
+		  id = i;
+		}
+	}
+	if(typeof(id) === 'undefined'){
+		id = maxWorms-1;
+		clearInterval(wormTimers[id]);
+	}
+	if(event){
+		var mouseX, mouseY;
+		console.log("mouse event");
+		if (event.pageX || event.pageY) {
+			mouseX = event.pageX;
+			mouseY = event.pageY;
+		} else {
+			mouseX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+			mouseY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+		}  
+		mouseX -= canvas.offsetLeft;
+		mouseY -= canvas.offsetTop;
+		
+		x[id] = Math.floor(mouseX / cellSize);
+		y[id] = Math.floor(mouseY / cellSize);
+	}else{
+		x[id] = 0;
+		y[id] = 0;
+	}
+	
+	index[id] = iterations - 1;
+	pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
+	pixelStep[id] = [0, 0, 0];
+	console.log("worm", id);
     wormTimers[id] = setInterval(function() { draw(id); }, interval / iterations);
 
 }
+
 /** set the current cell to the one @ mouse pointer and clear screen with random color */
 function clear(event) {
-    if (event.pageX || event.pageY) {
-        mouseX = event.pageX;
-        mouseY = event.pageY;
-    } else {
-        mouseX = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-        mouseY = event.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-    }
-    mouseX -= canvas.offsetLeft;
-    mouseY -= canvas.offsetTop;
-    x[0] = Math.floor(mouseX / cellSize);
-    y[0] = Math.floor(mouseY / cellSize);
-    c.fillStyle = "rgb(" + getRandomInt(255) + ", " + getRandomInt(255) + ", " + getRandomInt(255) + ")";
+	console.log("clear");
+	clearWormTimers();    
+	changeBackground();
+	startWorm();
+}
+
+function changeBackground(){
+	c.fillStyle = "rgb(" + getRandomInt(255) + ", " + getRandomInt(255) + ", " + getRandomInt(255) + ")";
     document.body.style.background = c.fillStyle;
     c.fillRect(0, 0, canvas.width, canvas.height);
-  for(var i=1;i<maxWorms;i++){
-    clearInterval(wormTimers[i]);
-    wormTimers[i]=null;
-  }
+}
+
+function clearWormTimers(){
+	for(var i=0;i<wormTimers.length;i++){
+		clearInterval(wormTimers[i]);
+	}
+	wormTimers = [];
 }
 
 /** returns a random integer range [max(oldColor - range, 0): min(oldColor + range, 255)] */

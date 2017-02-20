@@ -86,10 +86,10 @@ function draw(id) {
 }
 
 /** start another worm */
-function startWorm(mousePosition){
+function createWorm(mousePosition){
 	
 	if(!mousePosition){
-		mousePosition = {x: getRandomInt(columnSize), y: getRandomInt(columnSize)};
+		mousePosition = {x: rndInt(columnSize), y: rndInt(columnSize)};
 	}
 	
 	var id;
@@ -109,18 +109,17 @@ function startWorm(mousePosition){
 	pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
 	pixelStep[id] = [0, 0, 0];
     wormTimers[id] = setInterval(function() { draw(id); }, interval / iterations);
-
 }
 
 /** set the current cell to the one @ mouse pointer and clear screen with random color */
 function clear(position) {
 	clearWormTimers();
 	changeBackground();
-	startWorm(position);
+	createWorm(position);
 }
 
 function changeBackground(){
-	c.fillStyle = "rgb(" + getRandomInt(255) + ", " + getRandomInt(255) + ", " + getRandomInt(255) + ")";
+	c.fillStyle = "rgb(" + rndInt(255) + ", " + rndInt(255) + ", " + rndInt(255) + ")";
     document.body.style.background = c.fillStyle;
     c.fillRect(0, 0, canvas.width, canvas.height);
 }
@@ -134,28 +133,15 @@ function clearWormTimers(){
 
 /** returns a random integer range [max(oldColor - range, 0): min(oldColor + range, 255)] */
 function nextColor255(oldColor, range) {
-    var newColor = oldColor + getRandomInt(range * 2) - range;
+    var newColor = oldColor + rndInt(range * 2) - range;
     if (newColor < 0) return 0;
     if (newColor > 255) return 255;
     return newColor;
 }
 
 /** returns a random integer in the range [0;max] */
-function getRandomInt(max) {
+function rndInt(max) {
     return Math.round(Math.random() * max);
-}
-
-function click(event){
-	startWorm(getMousePosition(event));
-}
-
-function dblclick(event){
-	clear(getMousePosition(event));
-}
-
-function resize(){
-	console.log("resize!");
-	clear();
 }
 
 function getMousePosition(event){
@@ -171,6 +157,19 @@ function getMousePosition(event){
 	mouseY -= canvas.offsetTop;
 	
 	return { x: mouseX / cellSize, y: mouseY / cellSize };
+}
+
+function click(event){
+	createWorm(getMousePosition(event));
+}
+
+function dblclick(event){
+	clear(getMousePosition(event));
+}
+
+function resize(){
+	console.log("resize!");
+	clear();
 }
 
 clear();

@@ -19,22 +19,14 @@ var maxWorms = 3;
 
 var index = [];
 index[0] = iterations;
-
 /** cell color at beginning of coloring */
 var pixel = [];
-pixel[0] = [0, 0, 0];
 var pixelStep = [];
-pixelStep[0] = [0, 0, 0];
-
 /** coordinates of current cell */
 var x = [];
-x[0] = getRandomInt(columnSize);
 var y = [];
-y[0] = getRandomInt(columnSize);
 
-/** loop entry point*/
 var wormTimers = [];
-wormTimers[0] = setInterval(function() { draw(0); }, interval / iterations);
 
 /** pick a new cell and pick a new color */
 function colorize(id) {
@@ -95,6 +87,11 @@ function draw(id) {
 
 /** start another worm */
 function startWorm(mousePosition){
+	
+	if(!mousePosition){
+		mousePosition = {x: getRandomInt(columnSize), y: getRandomInt(columnSize)};
+	}
+	
 	var id;
 	for(var i = 1;i < maxWorms; i++){
 		if(typeof(wormTimers[i]) === 'undefined' || wormTimers[i] === null){
@@ -105,14 +102,9 @@ function startWorm(mousePosition){
 		id = maxWorms-1;
 		clearInterval(wormTimers[id]);
 	}
-	if(mousePosition){
-		x[id] = Math.floor(mousePosition.x / cellSize);
-		y[id] = Math.floor(mousePosition.y / cellSize);
-	}else{
-		x[id] = 0;
-		y[id] = 0;
-	}
 	
+	x[id] = mousePosition.x;
+	y[id] = mousePosition.y;
 	index[id] = iterations - 1;
 	pixel[id] = c.getImageData(x[id] * cellSize, y[id] * cellSize, 1, 1).data;
 	pixelStep[id] = [0, 0, 0];
@@ -122,7 +114,7 @@ function startWorm(mousePosition){
 
 /** set the current cell to the one @ mouse pointer and clear screen with random color */
 function clear(position) {
-	clearWormTimers();    
+	clearWormTimers();
 	changeBackground();
 	startWorm(position);
 }
@@ -162,7 +154,8 @@ function dblclick(event){
 }
 
 function resize(){
-	clear({x: 0,y: 0});
+	console.log("resize!");
+	clear();
 }
 
 function getMousePosition(event){
@@ -177,5 +170,7 @@ function getMousePosition(event){
 	mouseX -= canvas.offsetLeft;
 	mouseY -= canvas.offsetTop;
 	
-	return { x: mouseX, y: mouseY };
+	return { x: mouseX / cellSize, y: mouseY / cellSize };
 }
+
+clear();

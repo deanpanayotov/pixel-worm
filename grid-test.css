@@ -1,0 +1,13 @@
+body {
+    margin:0 auto;
+    text-align: center;
+}
+
+#table {
+    border-collapse: collapse;
+    display: inline-block;
+}
+
+#wrapper {
+    text-align: center
+}

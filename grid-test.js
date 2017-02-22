@@ -7,6 +7,8 @@ var GRID_PADDING = 0.1;
 var COLOR_BLACK = "#000000";
 var COLOR_WHITE = "#FFFFFF";
 
+window.addEventListener('click', click, false);
+window.addEventListener('dblclick', dblclick, false);
 window.addEventListener('resize', init, false);
 
 function init(){
@@ -41,4 +43,12 @@ function init(){
 }
 
 init();
+
+function click(){
+    console.log("click");
+}
+
+function dblclick(){
+    console.log("dblclick");
+}
 

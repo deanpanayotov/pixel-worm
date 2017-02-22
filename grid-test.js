@@ -59,7 +59,7 @@ function init(){
                 const temp_i = i;
                 const temp_j = j;
                 cell.addEventListener("click",function(){
-                    click({x: temp_j, y: temp_i});
+                    click({x: temp_i, y: temp_j});
                 });
             })();
         }
